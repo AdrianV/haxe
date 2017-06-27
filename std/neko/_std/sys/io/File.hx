@@ -59,11 +59,19 @@ enum FileHandle {
 	}
 
 	public static function copy( srcPath : String, dstPath : String ) : Void {
-		var s = read(srcPath,true);
-		var d = write(dstPath,true);
-		d.writeInput(s);
-		s.close();
-		d.close();
+		var d = null;
+		var s = null;
+		var err = null;
+		try {
+			d = File.write(dstPath,true);
+			s = File.read(srcPath, true);
+			d.writeInput(s);
+		} catch (e: Dynamic) {
+			err = e;
+		}
+		if (s != null) s.close();
+		if (d != null) d.close();
+		if (err != null) neko.Lib.rethrow(err);
 	}
 
 	private static var file_contents = neko.Lib.load("std","file_contents",1);
